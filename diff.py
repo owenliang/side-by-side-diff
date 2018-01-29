@@ -34,7 +34,8 @@ for line in lines:
     # @@ -1,16 +1,18 @@
     match_result = re.match(r'^@@\s*-(\d+)(,(\d+))?\s*\+(\d+)(,(\d+))?\s*@@$', line)
     if match_result:
-        indexes[-1]['diff_segment'].append({'left_segment': [], 'right_segment': []})
+        diff_seg = {'left_segment': [], 'right_segment': [], 'left_start_line': match_result.group(1), 'right_start_line': match_result.group(4)}
+        indexes[-1]['diff_segment'].append(diff_seg)
         continue
 
     #  -[项目地址]
@@ -64,7 +65,7 @@ for index in indexes:
     for diff_segment in index['diff_segment']:
         diff_segment['side_by_side_segment'] = list(difflib._mdiff(diff_segment['left_segment'], diff_segment['right_segment']))
 
-# pprint(indexes)
+pprint(indexes)
 
 # 4, 根据side-by-side列表, 生成html视图
 
