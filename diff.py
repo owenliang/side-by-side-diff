@@ -78,6 +78,7 @@ for index in indexes:
                 'right_line': side_by_side_segment[1][0],
                 'right_row': side_by_side_segment[1][1],
             }
+            # TODO: 需要判断row.startswith(), 进行染色与截断
             if row_data['left_line']: # 非空白行
                 row_data['left_row'] = row_data['left_row'][2:-1].rstrip("\n")
                 row_data['left_line'] = int(diff_segment['left_start_line']) + row_data['left_line'] - 1
