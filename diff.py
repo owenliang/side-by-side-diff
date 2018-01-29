@@ -65,8 +65,38 @@ for index in indexes:
     for diff_segment in index['diff_segment']:
         diff_segment['side_by_side_segment'] = list(difflib._mdiff(diff_segment['left_segment'], diff_segment['right_segment']))
 
-pprint(indexes)
+# pprint(indexes)
 
-# 4, 根据side-by-side列表, 生成html视图
+# 4, 生成用于渲染的side-by-side列表(TODO: 处理多个index文件)
+view_data = []
+for index in indexes:
+    for diff_segment in index['diff_segment']:
+        for side_by_side_segment in diff_segment['side_by_side_segment']:
+            row_data = {
+                'left_line': side_by_side_segment[0][0],
+                'left_row': side_by_side_segment[0][1],
+                'right_line': side_by_side_segment[1][0],
+                'right_row': side_by_side_segment[1][1],
+            }
+            if row_data['left_line']: # 非空白行
+                row_data['left_row'] = row_data['left_row'][2:-1].rstrip("\n")
+                row_data['left_line'] = int(diff_segment['left_start_line']) + row_data['left_line'] - 1
+            if row_data['right_line']: # 非空白行
+                row_data['right_row'] = row_data['right_row'][2:-1].rstrip("\n")
+                row_data['right_line'] = int(diff_segment['right_start_line']) + row_data['right_line'] - 1
+            view_data.append(row_data)
+
+# 5, 生成table布局
+html_dom = ["<head><meta charset='utf-8'></head><body><table>"]
+row_template = '<tr><td>{left_line}</td><td>{left_row}</td><td>{right_line}</td><td>{right_row}</td></tr>'
+for row_data in view_data:
+    row = row_template[:].replace('{left_line}', str(row_data['left_line'])).replace('{left_row}', row_data['left_row']).replace('{right_line}', str(row_data['right_line'])).replace('{right_row}', row_data['right_row'])
+    html_dom.append(row)
+html_dom.append("</table></body>")
+
+# 6, 写到html文件在中
+with open('diff.html', 'w') as fd:
+    html = ''.join(html_dom)
+    fd.write(html)
 
 
