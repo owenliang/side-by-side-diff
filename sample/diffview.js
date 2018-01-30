@@ -35,7 +35,7 @@
                     table.append($(generate_row(row)))
                 }
             }
+            this.append(table)
         }
-        this.append(table)
     }
 })(jQuery)
