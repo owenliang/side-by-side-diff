@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>side by side diff view</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="diffview.js"></script>
+    <link href="diffview.css" rel="stylesheet" type="text/css" />
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: 'diff.json',
+                dataType: 'json',
+                success: function (data) {
+                    $('#diff-container').diffview(data)
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+    <div id="diff-container"></div>
+</body>
+</html>

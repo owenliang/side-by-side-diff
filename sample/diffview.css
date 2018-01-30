@@ -1,0 +1,19 @@
+.side-by-side-table td {
+    border: 1px solid rgba(0,0,0,0.11);
+    color: #555;
+}
+.side-by-side-table .index-head {
+    background-color: orange;
+}
+.side-by-side-table .seg-head {
+    background-color: rgba(0,0,0,0.15);
+}
+.side-by-side-table .added {
+    background-color: #aaffaa;
+}
+.side-by-side-table .deleted {
+    background-color: #ffaaaa;
+}
+.side-by-side-table .changed {
+    background-color: #ffff77;
+}
