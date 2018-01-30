@@ -59,23 +59,28 @@ for line in lines:
         indexes[-1]['diff_segment'][-1]['left_segment'].append(line[1:])
         indexes[-1]['diff_segment'][-1]['right_segment'].append(line[1:])
 
+#pprint(indexes)
+
 # 3, 将left_segment与right_segment传给difflib._mdiff, 得到side-by-side列表
 for index in indexes:
     for diff_segment in index['diff_segment']:
         diff_segment['side_by_side_segment'] = list(difflib._mdiff(diff_segment['left_segment'], diff_segment['right_segment']))
 
-# pprint(indexes)
-
 # 4, 生成用于渲染的side-by-side列表
-def decorate_row(row):
-    if row.startswith('\0+'): #  '\0+' -- marks start of added text
-        return row[2:-1].rstrip("\n"), 'added'
-    elif row.startswith('\0-' ): #  '\0-' -- marks start of deleted text
-        return row[2:-1].rstrip("\n"), 'deleted'
-    elif row.startswith('\0^'): # '\0^' -- marks start of changed text
-        return row[2:-1].rstrip("\n"), 'changed'
-    else: # 上下文行
-        return row.rstrip("\n"), 'context'
+def decorate_row(row, is_deleted):
+    out = ''
+    while row:
+        #  '\0+' -- marks start of added text
+        #  '\0-' -- marks start of deleted text
+        # '\0^' -- marks start of changed text
+        if row.startswith('\0+') or row.startswith('\0-' ) or row.startswith('\0^'):
+            row = row[2:]
+        elif row.startswith('\1'):  # '\1' -- marks end of added/deleted/changed text
+            row = row[1:]
+        else: # 未变化的内容
+            out += row[0]
+            row = row[1:]
+    return out, 'deleted' if is_deleted else 'added'
 
 view_data = []
 for index in indexes:
@@ -86,18 +91,21 @@ for index in indexes:
             row_data = {
                 'left_line': side_by_side_segment[0][0],
                 'left_row': side_by_side_segment[0][1],
-                'left_type': 'blank',
+                'left_type': 'blank' if side_by_side_segment[2] else 'context',
                 'right_line': side_by_side_segment[1][0],
                 'right_row': side_by_side_segment[1][1],
-                'right_type': 'blank',
+                'right_type': 'blank' if side_by_side_segment[2] else 'context',
             }
+
             # 非留白的左侧行
             if row_data['left_line']:
-                row_data['left_row'], row_data['left_type'] = decorate_row(row_data['left_row'])
+                if row_data['left_type'] == 'blank':
+                    row_data['left_row'], row_data['left_type'] = decorate_row(row_data['left_row'], True)
                 row_data['left_line'] = int(diff_segment['left_start_line']) + row_data['left_line'] - 1
             # 非留白的右侧行
             if row_data['right_line']:
-                row_data['right_row'], row_data['right_type'] = decorate_row(row_data['right_row'])
+                if row_data['right_type'] == 'blank':
+                    row_data['right_row'], row_data['right_type'] = decorate_row(row_data['right_row'], False)
                 row_data['right_line'] = int(diff_segment['right_start_line']) + row_data['right_line'] - 1
             view_data[-1]['segments'][-1]['rows'].append(row_data)
 
