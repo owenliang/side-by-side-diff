@@ -1,0 +1,131 @@
+Index: bgm/application_zdm/views/mgc_detail.php
+===================================================================
+--- bgm/application_zdm/views/mgc_detail.php	(revision 172736)
++++ bgm/application_zdm/views/mgc_detail.php	(working copy)
+@@ -189,7 +189,7 @@
+         </div>
+     </div>
+     <div class="button-group pull-right">
+-        <a class="btn btn-primary btn-lg btn-submit" name="publish"><?= $status != 2 ? '发布榜单' : '保存榜单' ?></a>
++        <a class="btn btn-primary btn-lg btn-submit" name="publish"><?= $status == 2 ? '保存榜单' : '发布榜单' ?></a>
+         <a class="btn btn-success btn-lg btn-submit" name="draft"><?= $status != 2 ? '保存为草稿' : '榜单已发布，退回为草稿' ?></a>
+     </div>
+ </form>
+@@ -236,27 +236,6 @@
+                         var uiLi3=[{n:"请选择",k:0}];
+                         $(this).find("ul:first").children().each(function(){
+                             uiLi3.push({
+-                                n:$(this).find("a:first").html(),
+-                                k:$(this).find("input:first").val()
+-                            });
+-                        });
+-                        uiLi2.push({
+-                            s:$(this).find("a:first").html(),
+-                            k:$(this).find("input:first").val(),
+-                            r:uiLi3
+-                        });
+-                    });
+-                    uiLi1.push({
+-                        n:$(this).find("a:first").html(),
+-                        k:$(this).find("input:first").val(),
+-                        a:uiLi2
+-                    });
+-                });
+-                cateList.push({
+-                    p:$(this).find("a:first").html(),
+-                    k:$(this).find("input:first").val(),
+-                    c:uiLi1
+-                });
+             });
+             cateJson = {dataList:cateList};
+             return cateJson;
+@@ -285,42 +264,19 @@
+         }
+     };
+ 
+-    var toolBox={
+-        cateSelected: function (curSelected) {
+-            //初始化商品分类json数据
+-            handleCategory.getCateJson(function(data){
+-                var curSelectedArr=[];
+-                var catSelectConf={
+-                    jsonData:data,
+-                    first:0,//电脑数码
+-                    second:0,//手机通讯
+-                    third:0,//非智能手机
+-                    four:0,
+-                    nodata:"none"
++    var toolBox={vwregergweartvwertgreqgewr
+                 };
+                 if(curSelected){//商品分类id匹配成功
+                     curSelectedArr=curSelected.split(",");
+                     if(curSelectedArr.length>0){
+                         $.each(curSelectedArr,function(index,cid){
+-                            if(index==0){
+-                                catSelectConf.first=cid;
+-                            }else if(index==1){
+-                                catSelectConf.second=cid;
+-                            }else if(index==2){
+-                                catSelectConf.third=cid;
+-                            }else if(index==3){
+-                                catSelectConf.four=cid;
+-                            }else{
++                            if(index=sfawdv
++                                fdd
++                            fvweq
++                            fa
++                            wefawre
++                            fgvwref
+ 
+-                            }
+-                        })
+-                    }
+-                }
+-                handleCategory.cateInit(catSelectConf);//选中的商品分类填充到select
+-            });
+-        },
+-    };
+-
+     toolBox.cateSelected("<?= implode(',', $categories) ?>");
+ </script>
+ 
+@@ -341,38 +297,7 @@
+ 
+         $('#tag-selector').select2({
+             ajax: {
+-                url: '/tool/tag_search_by_title',
+-                dataType: 'json',
+-                data: function (params) {
+-                    return {
+-                        term: params.term,
+-                        page: params.page
+-                    };
+-                },
+-                processResults: function (data) {
+-                    return {
+-                        results: data.data,
+-                        pagination: {
+-                            more: data.data.length > 0
+-                        }
+-                    };
+-                }
+-            },
+-            placeholder: '键入关键词开始搜索...',
+-            minimumInputLength: 1
+-        });
+-
+-        $('.btn-submit').click(function (event) {
+-            event.preventDefault();
+-
+-            var formData = $(this).closest('form').serializeArray();
+-
+-            switch (this.name) {
+-                case 'draft':
+-                    formData.push({name: 'status', value: 1});
+-                    formData.push({name: 'is_deleted', value: 0});
+-                    break;
+-                case 'publish':
++           
+                     formData.push({name: 'status', value: 2});
+                     formData.push({name: 'is_deleted', value: 0});
+                     break;

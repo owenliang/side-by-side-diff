@@ -1,12 +1,17 @@
+.side-by-side-table {
+    width: 100%;
+    border-collapse:collapse;
+    text-align: left;
+}
 .side-by-side-table td {
     border: 1px solid rgba(0,0,0,0.11);
     color: #555;
 }
 .side-by-side-table .index-head {
-    background-color: orange;
+    background-color: #fafbfc;
 }
 .side-by-side-table .seg-head {
-    background-color: rgba(0,0,0,0.15);
+    background-color: #f1f8ff;
 }
 .side-by-side-table .added {
     background-color: #aaffaa;
@@ -16,4 +21,7 @@
 }
 .side-by-side-table .changed {
     background-color: #ffff77;
+}
+.side-by-side-table .line-td {
+    text-align: center;
 }
