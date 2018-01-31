@@ -19,6 +19,7 @@
     }
 
     $.fn.diffview = function(view_data) {
+        var container = $("<div class='side-by-side-container'>")
         for (var i = 0; i < view_data.length; ++i) {
             // 每个文件是一个table
             var index = view_data[i]
@@ -43,7 +44,8 @@
                     table.append($(generate_row(row)))
                 }
             }
-            this.append($("<h2>").text(index.index_name)).append(table)
+            container.append($('<div class="index-name">').text(index.index_name)).append(table)
         }
+        this.append(container)
     }
 })(jQuery)
