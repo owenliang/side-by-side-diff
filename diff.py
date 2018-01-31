@@ -16,9 +16,9 @@ for line in lines:
     line = line.replace('\r', '')
 
     # Index: favicon.ico
-    match_result = re.match(r'^Index:\s*', line)
+    match_result = re.match(r'^Index:\s*(\S+)', line)
     if match_result:
-        indexes.append({'diff_segment': []})
+        indexes.append({'index_name': match_result.group(1), 'diff_segment': []})
         continue
 
     # --- yaf/readme.txt	(revision 171415)
@@ -36,7 +36,11 @@ for line in lines:
     # @@ -1,16 +1,18 @@
     match_result = re.match(r'^@@\s*-(\d+)(,(\d+))?\s*\+(\d+)(,(\d+))?\s*@@$', line)
     if match_result:
-        diff_seg = {'left_segment': [], 'right_segment': [], 'left_start_line': match_result.group(1), 'right_start_line': match_result.group(4)}
+        diff_seg = {
+            'left_segment': [], 'right_segment': [],
+            'left_count': match_result.group(3) if match_result.group(3) is not None else 1,
+            'right_count': match_result.group(6) if match_result.group(6) is not None else 1,
+            'left_start_line': match_result.group(1), 'right_start_line': match_result.group(4)}
         indexes[-1]['diff_segment'].append(diff_seg)
         continue
 
@@ -95,9 +99,14 @@ def decorate_row(row, is_deleted):
 
 view_data = []
 for index in indexes:
-    view_data.append({'old_file': index['old_file'], 'new_file': index['new_file'], 'segments': []})
+    view_data.append({'index_name': index['index_name'], 'old_file': index['old_file'], 'new_file': index['new_file'], 'segments': []})
     for diff_segment in index['diff_segment']:
-        view_data[-1]['segments'].append({'left_start_line': diff_segment['left_start_line'], 'right_start_line': diff_segment['right_start_line'], 'rows': []})
+        view_data[-1]['segments'].append({
+            'left_start_line': diff_segment['left_start_line'],
+            'right_start_line': diff_segment['right_start_line'],
+            'left_count': diff_segment['left_count'],
+            'right_count': diff_segment['right_count'],
+            'rows': []})
         for side_by_side_segment in diff_segment['side_by_side_segment']:
             row_data = {
                 'left_line': side_by_side_segment[0][0],

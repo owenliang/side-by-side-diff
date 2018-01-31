@@ -1,6 +1,6 @@
 (function ($) {
-    var index_head_tpl = '<tr class="index-head"><td colspan="2">{old_file}</td><td colspan="2">{new_file}</td></tr>';
-    var seg_head_tpl = '<tr class="seg-head"><td colspan="2">>>>起始行号:{left_start_line}</td><td colspan="2">>>>起始行号:{right_start_line}</td></tr>';
+    var index_head_tpl = '<tr class="index-head"><td colspan="2">旧文件:{old_file}</td><td colspan="2">新文件:{new_file}</td></tr>';
+    var seg_head_tpl = '<tr class="seg-head"><td colspan="2">>>>行号:{left_start_line}, 行数:{left_count}</td><td colspan="2">>>>行号:{right_start_line}, 行数:{right_count}</td></tr>';
     var row_tpl = '<tr><td class="{left_type} line-td">{left_line}</td><td class="{left_type}">{left_row}</td><td class="{right_type} line-td">{right_line}</td><td class="{right_type}">{right_row}</td></tr>';
 
     function generate_index_head(index) {
@@ -10,7 +10,7 @@
 
     function generate_seg_head(seg) {
         var tpl = seg_head_tpl
-        return tpl.replace(/{left_start_line}/g, seg.left_start_line).replace(/{right_start_line}/g, seg.right_start_line)
+        return tpl.replace(/{left_start_line}/g, seg.left_start_line).replace(/{left_count}/g, seg.left_count).replace(/{right_start_line}/g, seg.right_start_line).replace(/{right_count}/g, seg.right_count)
     }
 
     function generate_row(row) {
@@ -35,7 +35,7 @@
                     table.append($(generate_row(row)))
                 }
             }
-            this.append(table)
+            this.append($("<h2>").text(index.index_name)).append(table)
         }
     }
 })(jQuery)
