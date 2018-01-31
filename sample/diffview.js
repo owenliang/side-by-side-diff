@@ -26,10 +26,8 @@
             var table = $('<table class="side-by-side-table">')
 
             // 用于控制样式的占位
-            table.append($('<colgroup class="line-td">'))
-            table.append($('<colgroup>'))
-            table.append($('<colgroup class="line-td">'))
-            table.append($('<colgroup>'))
+            var col_group = $("<colgroup>").append($('<col class="line-td">')).append($('<col>')).append($('<col class="line-td">')).append($('<col>'))
+            table.append(col_group)
 
             // 表格头
             table.append($(generate_index_head(index)))
