@@ -15,13 +15,16 @@ for line in lines:
     # 删除\r
     line = line.replace('\r', '')
 
+    # Index: favicon.ico
+    match_result = re.match(r'^Index:\s*(\S+)', line)
+    if match_result:
+        indexes.append({'index_name': match_result.group(1), 'diff_segment': []})
+        continue
+
     # --- yaf/readme.txt	(revision 171415)
     match_result = re.match(r'^---\s*(\S+)', line)
     if match_result:
-        indexes.append({
-            'old_file': match_result.group(1),
-            'diff_segment': []
-        })
+        indexes[-1]['old_file'] = match_result.group(1)
         continue
 
     # +++ yaf/readme.txt	(working copy)
@@ -33,8 +36,16 @@ for line in lines:
     # @@ -1,16 +1,18 @@
     match_result = re.match(r'^@@\s*-(\d+)(,(\d+))?\s*\+(\d+)(,(\d+))?\s*@@$', line)
     if match_result:
-        diff_seg = {'left_segment': [], 'right_segment': [], 'left_start_line': match_result.group(1), 'right_start_line': match_result.group(4)}
+        diff_seg = {
+            'left_segment': [], 'right_segment': [],
+            'left_count': match_result.group(3) if match_result.group(3) is not None else 1,
+            'right_count': match_result.group(6) if match_result.group(6) is not None else 1,
+            'left_start_line': match_result.group(1), 'right_start_line': match_result.group(4)}
         indexes[-1]['diff_segment'].append(diff_seg)
+        continue
+
+    # 没有segment上下文
+    if not indexes[-1]['diff_segment']:
         continue
 
     #  -[项目地址]
@@ -55,14 +66,18 @@ for line in lines:
         continue;
 
     #  [框架目标]
-    if indexes:
+    if indexes and indexes[-1]['diff_segment']: # 跳过一些二进制文件操作, 它们没有segment上下文
         indexes[-1]['diff_segment'][-1]['left_segment'].append(line[1:])
         indexes[-1]['diff_segment'][-1]['right_segment'].append(line[1:])
 
 #pprint(indexes)
 
 # 3, 将left_segment与right_segment传给difflib._mdiff, 得到side-by-side列表
-for index in indexes:
+for index in indexes[:]:
+    # 删除没有segment的index
+    if not index['diff_segment']:
+        indexes.remove(index)
+        continue
     for diff_segment in index['diff_segment']:
         diff_segment['side_by_side_segment'] = list(difflib._mdiff(diff_segment['left_segment'], diff_segment['right_segment']))
 
@@ -84,9 +99,14 @@ def decorate_row(row, is_deleted):
 
 view_data = []
 for index in indexes:
-    view_data.append({'old_file': index['old_file'], 'new_file': index['new_file'], 'segments': []})
+    view_data.append({'index_name': index['index_name'], 'old_file': index['old_file'], 'new_file': index['new_file'], 'segments': []})
     for diff_segment in index['diff_segment']:
-        view_data[-1]['segments'].append({'left_start_line': diff_segment['left_start_line'], 'right_start_line': diff_segment['right_start_line'], 'rows': []})
+        view_data[-1]['segments'].append({
+            'left_start_line': diff_segment['left_start_line'],
+            'right_start_line': diff_segment['right_start_line'],
+            'left_count': diff_segment['left_count'],
+            'right_count': diff_segment['right_count'],
+            'rows': []})
         for side_by_side_segment in diff_segment['side_by_side_segment']:
             row_data = {
                 'left_line': side_by_side_segment[0][0],
