@@ -7,6 +7,7 @@
     white-space: -o-pre-wrap;
     font-size: 12px;
     color: #555;
+    table-layout: fixed;
 }
 .side-by-side-table td {
     border: 1px solid rgba(0,0,0,0.11);
@@ -27,5 +28,6 @@
     background-color: #ffff77;
 }
 .side-by-side-table .line-td {
+    width: 50px;
     text-align: center;
 }
