@@ -23,6 +23,14 @@
             // 每个文件是一个table
             var index = view_data[i]
             var table = $('<table class="side-by-side-table">')
+
+            // 用于控制样式的占位
+            table.append($('<colgroup class="line-td">'))
+            table.append($('<colgroup>'))
+            table.append($('<colgroup class="line-td">'))
+            table.append($('<colgroup>'))
+
+            // 表格头
             table.append($(generate_index_head(index)))
 
             // 文件内每个段落
