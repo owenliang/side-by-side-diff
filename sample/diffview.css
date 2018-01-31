@@ -1,3 +1,13 @@
+.side-by-side-container * {
+    padding: 0;
+    margin: 0;
+    font-family: Verdana;
+}
+.side-by-side-container .index-name {
+    font-size: 20px;
+    color: black;
+    padding-bottom: 10px;
+}
 .side-by-side-table {
     width: 100%;
     border-collapse:collapse;
@@ -9,12 +19,13 @@
     color: #555;
     table-layout: fixed;
     word-wrap: break-word;
+    margin: 0 0 15px 0;
 }
 .side-by-side-table td {
     border: 1px solid rgba(0,0,0,0.11);
 }
 .side-by-side-table .index-head {
-    background-color: #fafbfc;
+    background-color: rgb(233,234,236);
 }
 .side-by-side-table .seg-head {
     background-color: #f1f8ff;
